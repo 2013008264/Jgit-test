@@ -1,12 +1,9 @@
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.*;
-import org.eclipse.jgit.util.FS;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +32,8 @@ public class Main {
                sshTransport.setSshSessionFactory(sshSessionFactory);
             }
         };
+        PushCommand push = git.push().setTransportConfigCallback(transportConfigCallback)
+                .setPushAll();
         git.branchCreate()
                 .setStartPoint("453e8715b40641a1ae0e4892a645afb617f5f2a2")
                 .setName("TemporalBranch")
@@ -42,20 +41,15 @@ public class Main {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf1 = new SimpleDateFormat("hh:mm:ss");
         System.out.println(sdf1.format(cal.getTime()));
-        git.push()
-                .setPushAll()
-                .setTransportConfigCallback(transportConfigCallback)
-                .call();
+        push.call();
+
         cal = Calendar.getInstance();
         System.out.println(sdf1.format(cal.getTime()));
         git.branchDelete()
                 .setBranchNames("TemporalBranch")
                 .call();
 
-        git.push()
-                .setTransportConfigCallback(transportConfigCallback)
-                .setRefSpecs(new RefSpec(":refs/heads/TemporalBranch"))
-                .call();
+        push.call();
         cal = Calendar.getInstance();
         System.out.println(sdf1.format(cal.getTime()));
 
@@ -66,19 +60,14 @@ public class Main {
 
         cal = Calendar.getInstance();
         System.out.println(sdf1.format(cal.getTime()));
-        git.push()
-                .setPushAll()
-                .setTransportConfigCallback(transportConfigCallback)
-                .call();
+        push.call();
         cal = Calendar.getInstance();
         System.out.println(sdf1.format(cal.getTime()));
         git.branchDelete()
                 .setBranchNames("TemporalBranch")
                 .call();
 
-        git.push()
-                .setTransportConfigCallback(transportConfigCallback)
-                .setRefSpecs(new RefSpec(":refs/heads/TemporalBranch"))
+        push.setRefSpecs(new RefSpec(":refs/heads/TemporalBranch"))
                 .call();
         cal = Calendar.getInstance();
         System.out.println(sdf1.format(cal.getTime()));
